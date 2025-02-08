@@ -9,7 +9,7 @@ type Props = {
 export function HomeLayout({ children }: Props) {
    return (
       <SidebarProvider>
-         <div>
+         <div className="w-full">
             <HomeNavbar />
 
             <div className="flex min-h-screen pt-[4rem]">
