@@ -49,6 +49,7 @@ export const protectedProcedure = t.procedure.use(
       return opts.next({
          ctx: {
             ...ctx,
+            user,
          },
       });
    },
