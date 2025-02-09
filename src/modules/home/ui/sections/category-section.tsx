@@ -8,7 +8,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = { categoryId?: string };
 
-export default function Categoriessection({ categoryId }: Props) {
+export default function CategoriesSection({ categoryId }: Props) {
    return (
       <Suspense
          fallback={<FilterCarousel isLoading data={[]} onSelect={() => {}} />}

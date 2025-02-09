@@ -79,7 +79,7 @@ export default function FilterCarousel({
 
                {isLoading &&
                   Array.from({ length: 11 }).map((_, index) => (
-                     <CarouselItem key={index} className="pl-3 basis-auto">
+                     <CarouselItem key={index + 1} className="pl-3 basis-auto">
                         <Skeleton className="rounded-lg px-3 py-1 h-full text-sm w-[100px] font-semibold">
                            &nbsp;
                         </Skeleton>

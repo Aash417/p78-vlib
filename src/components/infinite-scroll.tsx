@@ -1,4 +1,4 @@
-import { useInersectionObserver } from '@/hooks/use-intersection-observer';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { useEffect } from 'react';
 import { Button } from './ui/button';
 
@@ -15,7 +15,7 @@ export default function InfiniteScroll({
    isFetchingNextPage,
    fetchNextPage,
 }: Props) {
-   const { targetRef, isIntersecting } = useInersectionObserver({
+   const { targetRef, isIntersecting } = useIntersectionObserver({
       threshold: 0.5,
       rootMargin: '100px',
    });
