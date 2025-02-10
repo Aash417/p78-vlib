@@ -3,13 +3,14 @@ import { videos } from '@/db/schema';
 import { mux } from '@/lib/mux';
 import {
    VideoAssetCreatedWebhookEvent,
+   VideoAssetDeletedWebhookEvent,
    VideoAssetErroredWebhookEvent,
    VideoAssetReadyWebhookEvent,
    VideoAssetTrackReadyWebhookEvent,
-   VideoAssetDeletedWebhookEvent,
 } from '@mux/mux-node/resources/webhooks';
 import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
+import { UTApi } from 'uploadthing/server';
 
 const SIGNING_SECRET = process.env.MUX_WEBHOOK_SECRET;
 
@@ -25,8 +26,8 @@ export const POST = async (request: Request) => {
       throw new Error('MUX_WEBHOOK_SECRET is not set');
    }
 
-   const headersPaylod = await headers();
-   const muxSignature = headersPaylod.get('mux-signature');
+   const headersPayload = await headers();
+   const muxSignature = headersPayload.get('mux-signature');
 
    if (!muxSignature) {
       return new Response('No signature found', { status: 401 });
@@ -54,7 +55,7 @@ export const POST = async (request: Request) => {
          await db
             .update(videos)
             .set({
-               muxAssestId: data.id,
+               muxAssetsId: data.id,
                muxStatus: data.status,
             })
             .where(eq(videos.muxUploadId, data.upload_id));
@@ -71,9 +72,23 @@ export const POST = async (request: Request) => {
          if (!playbackId)
             return new Response('Missing playback Id', { status: 400 });
 
-         const thumbnailUrl = `https:///image.mux.com/${playbackId}/thumbnail.jpg`;
-         const previewUrl = `https:///image.mux.com/${playbackId}/animated.gif`;
+         const tempThumbnailUrl = `https:///image.mux.com/${playbackId}/thumbnail.jpg`;
+         const tempPreviewUrl = `https:///image.mux.com/${playbackId}/animated.gif`;
          const duration = data.duration ? Math.round(data.duration * 1000) : 0;
+
+         const utapi = new UTApi();
+         const [uploadedThumbnail, uploadedProview] =
+            await utapi.uploadFilesFromUrl([tempThumbnailUrl, tempPreviewUrl]);
+
+         if (!uploadedThumbnail.data || !uploadedProview.data) {
+            return new Response('Failed to upload thumbnail or preview', {
+               status: 500,
+            });
+         }
+
+         const { key: thumbnailKey, url: thumbnailUrl } =
+            uploadedThumbnail.data;
+         const { key: previewKey, url: previewUrl } = uploadedProview.data;
 
          console.log('ready video : ', data.upload_id);
          await db
@@ -81,9 +96,11 @@ export const POST = async (request: Request) => {
             .set({
                muxStatus: data.status,
                muxPlaybackId: playbackId,
-               muxAssestId: data.id,
+               muxAssetsId: data.id,
                thumbnailUrl,
                previewUrl,
+               thumbnailKey,
+               previewKey,
                duration,
             })
             .where(eq(videos.muxUploadId, data.upload_id));
@@ -124,7 +141,7 @@ export const POST = async (request: Request) => {
          const data =
             payload.data as VideoAssetTrackReadyWebhookEvent['data'] & {
                asset_id: string;
-            }; // assest_id exists but ts doesnt know i.e, adding this here
+            }; // assets_id exists but ts doesn't know i.e, adding this here
 
          if (!data.asset_id)
             return new Response('Missing upload Id', { status: 400 });
@@ -137,7 +154,7 @@ export const POST = async (request: Request) => {
                muxTrackId: data.id,
                muxTrackStatus: data.status,
             })
-            .where(eq(videos.muxAssestId, data.asset_id));
+            .where(eq(videos.muxAssetsId, data.asset_id));
 
          break;
       }
