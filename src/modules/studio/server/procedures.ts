@@ -1,10 +1,30 @@
 import { db } from '@/db';
 import { videos } from '@/db/schema';
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
+import { TRPCError } from '@trpc/server';
 import { and, desc, eq, lt, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const studioRouter = createTRPCRouter({
+   getOne: protectedProcedure
+      .input(
+         z.object({
+            id: z.string().uuid(),
+         }),
+      )
+      .query(async ({ ctx, input }) => {
+         const { id: userId } = ctx.user;
+         const { id } = input;
+
+         const [video] = await db
+            .select()
+            .from(videos)
+            .where(and(eq(videos.id, id), eq(videos.userId, userId)));
+
+         if (!video) throw new TRPCError({ code: 'NOT_FOUND' });
+
+         return video;
+      }),
    getMany: protectedProcedure
       .input(
          z.object({
@@ -42,9 +62,9 @@ export const studioRouter = createTRPCRouter({
             .limit(limit + 1);
 
          const hasMore = data.length > limit;
-         // remove the last item casuse user doesn supposed to know that we have fetched 6 items
+         // remove the last item cause user doesn supposed to know that we have fetched 6 items
          const items = hasMore ? data.slice(0, -1) : data;
-         // Set the curson to last item if there is more data
+         // Set the cursor to last item if there is more data
          const lastItem = items[items.length - 1];
          const nextCursor = hasMore
             ? {
