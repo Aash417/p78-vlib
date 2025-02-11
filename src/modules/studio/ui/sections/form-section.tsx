@@ -37,7 +37,6 @@ import {
    LockIcon,
    MoreVerticalIcon,
    RotateCcwIcon,
-   SparklesIcon,
    TrashIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -49,6 +48,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import ThumbnailUploadModal from '../components/thumbnail-upload-modal';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
    videoId: string;
@@ -65,7 +65,67 @@ export default function FormSection({ videoId }: Readonly<Props>) {
 }
 
 function FomSectionSkeleton() {
-   return <div>FomSectionSkeleton</div>;
+   return (
+      <div>
+         <div className="flex items-center justify-between mb-6">
+            <div className="space-y-2">
+               <Skeleton className="h-7 w-32" />
+               <Skeleton className="h-4 w-40" />
+            </div>
+            <Skeleton className="h-9 w-24" />
+         </div>
+         {/* left side */}
+         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div className="space-y-8 lg:col-span-3">
+               <div className="space-y-2">
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-10 w-full" />
+               </div>
+
+               <div className="space-y-2">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-[220px] w-full" />
+               </div>
+
+               <div className="space-y-2">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-[84px] w-[153px]" />
+               </div>
+
+               <div className="space-y-2">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-10 w-full" />
+               </div>
+            </div>
+
+            {/* right side  */}
+            <div className="flex flex-col gap-y-8 lg:col-span-2">
+               <div className="flex flex-col gap-4 bg-[#F9F9F9] rounded-xl overflow-hidden">
+                  <Skeleton className="aspect-video" />
+
+                  <div className="px-4 py-4 space-y-6">
+                     <div className="space-y-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-5 w-full" />
+                     </div>
+                     <div className="space-y-2">
+                        <Skeleton className="h-2 w-24" />
+                        <Skeleton className="h-5 w-32" />
+                     </div>
+                     <div className="space-y-2">
+                        <Skeleton className="h-2 w-24" />
+                        <Skeleton className="h-5 w-32" />
+                     </div>
+                  </div>
+               </div>
+               <div className="space-y-2">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-10 w-full" />
+               </div>
+            </div>
+         </div>
+      </div>
+   );
 }
 
 function FormSectionSuspense({ videoId }: Readonly<Props>) {
@@ -146,7 +206,10 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
                   </div>
 
                   <div className="flex items-center gap-x-2">
-                     <Button type="submit" disabled={update.isPending}>
+                     <Button
+                        type="submit"
+                        disabled={update.isPending || !form.formState.isDirty}
+                     >
                         Save
                      </Button>
 
@@ -254,10 +317,10 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
                                              <ImagePlusIcon className="size-4 mr-1" />
                                              Change
                                           </DropdownMenuItem>
-                                          <DropdownMenuItem>
-                                             <SparklesIcon className="size-4 mr-1" />
-                                             AI generated
-                                          </DropdownMenuItem>
+                                          {/* <DropdownMenuItem> */}
+                                          {/*    <SparklesIcon className="size-4 mr-1" /> */}
+                                          {/*    AI generated */}
+                                          {/* </DropdownMenuItem> */}
                                           <DropdownMenuItem
                                              onClick={() =>
                                                 restoreThumbnail.mutate({
