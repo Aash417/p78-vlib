@@ -136,7 +136,7 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
    const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
    // change if deployin outside of vercel
-   const fullUrl = `${process.env.VERCEL_URL ?? 'http://localhost:3000'}/studio/videos/${videoId}`;
+   const fullUrl = `${process.env.VERCEL_URL ?? 'http://localhost:3000'}/videos/${videoId}`;
    const [isCopied, setIsCopied] = useState(false);
 
    const update = trpc.videos.update.useMutation({
