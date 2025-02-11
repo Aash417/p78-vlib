@@ -39,7 +39,7 @@ export default function VideoOwner({ user, videoId }: Props) {
             </Button>
          ) : (
             <SubscriptionButton
-               onClick={() => { }}
+               onClick={() => {}}
                disabled={false}
                isSubscribed={false}
                className="flex-none"

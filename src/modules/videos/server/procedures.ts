@@ -1,6 +1,5 @@
 import { db } from '@/db';
-import { z } from 'zod';
-import { users, videos, videoUpdateSchema } from '@/db/schema';
+import { users, videos, videoUpdateSchema, videoViews } from '@/db/schema';
 import { mux } from '@/lib/mux';
 import {
    baseProcedure,
@@ -10,6 +9,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { and, eq, getTableColumns } from 'drizzle-orm';
 import { UTApi } from 'uploadthing/server';
+import { z } from 'zod';
 
 export const videosRouter = createTRPCRouter({
    create: protectedProcedure.mutation(async ({ ctx }) => {
@@ -148,6 +148,10 @@ export const videosRouter = createTRPCRouter({
                user: {
                   ...getTableColumns(users),
                },
+               viewCount: db.$count(
+                  videoViews,
+                  eq(videoViews.videoId, videos.id),
+               ),
             })
             .from(videos)
             .innerJoin(users, eq(videos.userId, users.id))

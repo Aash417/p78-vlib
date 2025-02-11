@@ -43,13 +43,13 @@ export default function VideoMenu({ variant, videoId, onRemove }: Props) {
                Share
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => { }}>
+            <DropdownMenuItem onClick={() => {}}>
                <ListPlusIcon className="mr-2 size-4" />
                Add to playlist
             </DropdownMenuItem>
 
             {onRemove && (
-               <DropdownMenuItem onClick={() => { }}>
+               <DropdownMenuItem onClick={() => {}}>
                   <Trash2Icon className="mr-2 size-4" />
                   Remove
                </DropdownMenuItem>
