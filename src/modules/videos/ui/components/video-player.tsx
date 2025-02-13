@@ -10,6 +10,10 @@ type Props = {
    onPlay?: () => void;
 };
 
+export function VideoPlayerSkeleton() {
+   return <div className="aspect-video bg-black rounded-xl overflow-hidden" />;
+}
+
 export default function VideoPlayer({
    playbackId,
    thumbnailUrl,

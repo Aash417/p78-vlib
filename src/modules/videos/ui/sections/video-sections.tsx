@@ -6,8 +6,8 @@ import { useAuth } from '@clerk/nextjs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import VideoBanner from '../components/video-banner';
-import VideoPlayer from '../components/video-player';
-import VideoTopRow from '../components/video-top-row';
+import VideoPlayer, { VideoPlayerSkeleton } from '../components/video-player';
+import VideoTopRow, { VideoTopRowSkeleton } from '../components/video-top-row';
 
 type Props = {
    videoId: string;
@@ -15,11 +15,20 @@ type Props = {
 
 export default function VideoSection({ videoId }: Props) {
    return (
-      <Suspense fallback={<p>loading..</p>}>
+      <Suspense fallback={<VideoSectionSkeleton />}>
          <ErrorBoundary fallback={<p>error ..</p>}>
             <VideoSectionSuspense videoId={videoId} />
          </ErrorBoundary>
       </Suspense>
+   );
+}
+
+function VideoSectionSkeleton() {
+   return (
+      <>
+         <VideoPlayerSkeleton />
+         <VideoTopRowSkeleton />
+      </>
    );
 }
 
