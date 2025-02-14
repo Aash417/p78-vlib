@@ -11,6 +11,8 @@ import { trpc } from '@/trpc/client';
 import { useAuth, useClerk } from '@clerk/nextjs';
 import { formatDistanceToNow } from 'date-fns';
 import {
+   ChevronDownIcon,
+   ChevronUpIcon,
    MessageSquareIcon,
    MoreVerticalIcon,
    ThumbsDownIcon,
@@ -18,17 +20,24 @@ import {
    Trash2Icon,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { CommentsGetManyOutput } from '../../types';
+import CommentForm from './comment-form';
+import CommentReplies from './comment-replies';
 
 type Props = {
    comment: CommentsGetManyOutput['items'][number];
+   variant?: 'reply' | 'comment';
 };
 
-export default function CommentItem({ comment }: Props) {
+export default function CommentItem({ comment, variant = 'comment' }: Props) {
    const { userId } = useAuth();
    const utils = trpc.useUtils();
    const clerk = useClerk();
+
+   const [isReplyOpen, setIsReplyOpen] = useState(false);
+   const [isRepliesOpen, setIsRepliesOpen] = useState(false);
 
    const remove = trpc.comments.remove.useMutation({
       onSuccess: () => {
@@ -41,7 +50,6 @@ export default function CommentItem({ comment }: Props) {
          if (error.data?.code === 'UNAUTHORIZED') clerk.openSignIn();
       },
    });
-
    const like = trpc.commentReactions.like.useMutation({
       onSuccess: () => {
          utils.comments.getMany.invalidate({ videoId: comment.videoId });
@@ -66,7 +74,7 @@ export default function CommentItem({ comment }: Props) {
          <div className="flex gap-4">
             <Link href={`/users/${comment.userId}`}>
                <UserAvatar
-                  size="lg"
+                  size={variant === 'comment' ? 'lg' : 'sm'}
                   imageUrl={comment.user.imageUrl}
                   name={comment.user.name}
                />
@@ -127,6 +135,17 @@ export default function CommentItem({ comment }: Props) {
                         {comment.dislikeCount}
                      </span>
                   </div>
+
+                  {variant === 'comment' && (
+                     <Button
+                        size="sm"
+                        variant="ghost"
+                        className="size-8"
+                        onClick={() => setIsReplyOpen(true)}
+                     >
+                        Reply
+                     </Button>
+                  )}
                </div>
             </div>
 
@@ -136,11 +155,14 @@ export default function CommentItem({ comment }: Props) {
                      <MoreVerticalIcon />
                   </Button>
                </DropdownMenuTrigger>
+
                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => {}}>
-                     <MessageSquareIcon className="size-4" />
-                     Reply
-                  </DropdownMenuItem>
+                  {variant === 'comment' && (
+                     <DropdownMenuItem onClick={() => setIsReplyOpen(true)}>
+                        <MessageSquareIcon className="size-4" />
+                        Reply
+                     </DropdownMenuItem>
+                  )}
 
                   {comment.user.clerkId === userId && (
                      <DropdownMenuItem
@@ -153,6 +175,35 @@ export default function CommentItem({ comment }: Props) {
                </DropdownMenuContent>
             </DropdownMenu>
          </div>
+         {isReplyOpen && variant === 'comment' && (
+            <div className="mt-4 pl-14">
+               <CommentForm
+                  videoId={comment.videoId}
+                  parentId={comment.id}
+                  variant="reply"
+                  onSuccess={() => {
+                     setIsReplyOpen(false);
+                     setIsRepliesOpen(true);
+                  }}
+                  onCancel={() => setIsReplyOpen(false)}
+               />
+            </div>
+         )}
+         {comment.replyCount > 0 && variant === 'comment' && (
+            <div className="pl-14">
+               <Button
+                  size="sm"
+                  variant="tertiary"
+                  onClick={() => setIsRepliesOpen((current) => !current)}
+               >
+                  {isRepliesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                  {comment.replyCount} replies
+               </Button>
+            </div>
+         )}
+         {comment.replyCount > 0 && variant === 'comment' && isRepliesOpen && (
+            <CommentReplies parentId={comment.id} videoId={comment.videoId} />
+         )}
       </div>
    );
 }

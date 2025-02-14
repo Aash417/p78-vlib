@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
+   foreignKey,
    integer,
    pgEnum,
    pgTable,
@@ -91,18 +92,31 @@ export const videos = pgTable('videos', {
    updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const comments = pgTable('comments', {
-   id: uuid('id').primaryKey().defaultRandom(),
-   userId: uuid('user_id')
-      .references(() => users.id, { onDelete: 'cascade' })
-      .notNull(),
-   videoId: uuid('video_id')
-      .references(() => videos.id, { onDelete: 'cascade' })
-      .notNull(),
-   value: text('text').notNull(),
-   createdAt: timestamp('created_at').defaultNow().notNull(),
-   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+export const comments = pgTable(
+   'comments',
+   {
+      id: uuid('id').primaryKey().defaultRandom(),
+      parentId: uuid('parent_id'),
+      userId: uuid('user_id')
+         .references(() => users.id, { onDelete: 'cascade' })
+         .notNull(),
+      videoId: uuid('video_id')
+         .references(() => videos.id, { onDelete: 'cascade' })
+         .notNull(),
+      value: text('text').notNull(),
+      createdAt: timestamp('created_at').defaultNow().notNull(),
+      updatedAt: timestamp('updated_at').defaultNow().notNull(),
+   },
+   (t) => {
+      return [
+         foreignKey({
+            columns: [t.parentId],
+            foreignColumns: [t.id],
+            name: 'comments_parent_id_fkey',
+         }).onDelete('cascade'),
+      ];
+   },
+);
 
 export const videoViews = pgTable(
    'video_views',
@@ -224,7 +238,15 @@ export const CommentsRelations = relations(comments, ({ one, many }) => ({
       fields: [comments.videoId],
       references: [videos.id],
    }),
+   parent: one(comments, {
+      fields: [comments.parentId],
+      references: [comments.id],
+      relationName: 'comments_parent_id_fkey',
+   }),
    reactions: many(commentReactions),
+   replies: many(comments, {
+      relationName: 'comments_parent_id_fkey',
+   }),
 }));
 
 export const VideoViewRelations = relations(videoViews, ({ one }) => ({
@@ -273,7 +295,7 @@ export const videoSelectSchema = createSelectSchema(videos);
 
 export const videoViewSelectSchema = createSelectSchema(videoViews);
 export const videoViewInsertSchema = createInsertSchema(videoViews);
-export const videoViewUpdatechema = createUpdateSchema(videoViews);
+export const videoViewUpdateSchema = createUpdateSchema(videoViews);
 
 export const videoReactionSelectSchema = createSelectSchema(videoReactions);
 export const videoReactionInsertSchema = createInsertSchema(videoReactions);
