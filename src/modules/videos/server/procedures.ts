@@ -134,13 +134,13 @@ export const videosRouter = createTRPCRouter({
          const { key: thumbnailKey, url: thumbnailUrl } =
             uploadedThumbnail.data;
 
-         const [updatedVieo] = await db
+         const [updatedVideo] = await db
             .update(videos)
             .set({ thumbnailUrl, thumbnailKey })
             .where(and(eq(videos.id, input.id), eq(videos.userId, userId)))
             .returning();
 
-         return updatedVieo;
+         return updatedVideo;
       }),
    getOne: baseProcedure
       .input(
