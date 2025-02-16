@@ -24,7 +24,7 @@ import {
    SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { THUMBNAIL_FALLBACK } from '@/constants';
+import { APP_URL, THUMBNAIL_FALLBACK } from '@/constants';
 import { videoUpdateSchema } from '@/db/schema';
 import { snakeCaseToTitle } from '@/lib/utils';
 import VideoPlayer from '@/modules/videos/ui/components/video-player';
@@ -136,7 +136,7 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
    const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
    // change if deployin outside of vercel
-   const fullUrl = `${process.env.VERCEL_URL ?? 'http://localhost:3000'}/videos/${videoId}`;
+   const fullUrl = `${APP_URL ?? 'http://localhost:3000'}/videos/${videoId}`;
    const [isCopied, setIsCopied] = useState(false);
 
    const update = trpc.videos.update.useMutation({
@@ -154,6 +154,16 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
          utils.studio.getMany.invalidate();
          toast.success('Video Deleted');
          router.push('/studio');
+      },
+      onError: () => {
+         toast.error('Something went wrong');
+      },
+   });
+   const revalidate = trpc.videos.revalidate.useMutation({
+      onSuccess: () => {
+         utils.studio.getMany.invalidate();
+         utils.studio.getOne.invalidate({ id: videoId });
+         toast.success('Video revalidated');
       },
       onError: () => {
          toast.error('Something went wrong');
@@ -226,6 +236,12 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
                            >
                               <TrashIcon className="size-4 mr-2" />
                               Delete
+                           </DropdownMenuItem>
+                           <DropdownMenuItem
+                              onClick={() => revalidate.mutate({ id: videoId })}
+                           >
+                              <RotateCcwIcon className="size-4 mr-2" />
+                              Revalidate
                            </DropdownMenuItem>
                         </DropdownMenuContent>
                      </DropdownMenu>
