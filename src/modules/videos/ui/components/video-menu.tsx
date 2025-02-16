@@ -20,7 +20,11 @@ type Props = {
 };
 
 // todo implement whats left
-export default function VideoMenu({ variant, videoId, onRemove }: Props) {
+export default function VideoMenu({
+   variant = 'ghost',
+   videoId,
+   onRemove,
+}: Props) {
    function onShare() {
       // change if deployin outside of vercel
       const fullUrl = `${process.env.VERCEL_URL ?? 'http://localhost:3000'}/videos/${videoId}`;
