@@ -16,7 +16,8 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: Props) {
       onSuccess: () => {
          toast.success('Subscribed');
 
-         // todo reinvalidate subscriptions.getMany user.getOne
+         utils.videos.getManySubscribed.invalidate();
+
          if (fromVideoId) utils.videos.getOne.invalidate({ id: fromVideoId });
       },
       onError: (error) => {
@@ -30,7 +31,8 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: Props) {
       onSuccess: () => {
          toast.success('Unsubscribed');
 
-         // todo reinvalidate subscriptions.getMany user.getOne
+         utils.videos.getManySubscribed.invalidate();
+
          if (fromVideoId) utils.videos.getOne.invalidate({ id: fromVideoId });
       },
       onError: (error) => {

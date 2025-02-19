@@ -51,8 +51,8 @@ export default function VideoInfo({ data, onRemove }: Props) {
                <UserInfo name={data.user.name} />
             </Link>
             <Link href={`/videos/${data.id}`}>
-               <p>
-                  {compactViews} views * {compactDate}
+               <p className="font-medium text-sm">
+                  {compactViews} views • {compactDate}
                </p>
             </Link>
          </div>
