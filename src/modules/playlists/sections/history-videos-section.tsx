@@ -41,7 +41,7 @@ function HistoryVideoSectionSkeleton() {
 }
 
 function HistoryVideoSectionSuspense() {
-   const [videos, query] = trpc.playlist.getHistory.useSuspenseInfiniteQuery(
+   const [videos, query] = trpc.playlists.getHistory.useSuspenseInfiniteQuery(
       { limit: DEFAULT_LIMIT },
       {
          getNextPageParam: (lastPage) => lastPage.nextCursor,

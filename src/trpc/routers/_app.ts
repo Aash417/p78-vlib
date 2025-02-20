@@ -22,7 +22,7 @@ export const appRouter = createTRPCRouter({
    commentReactions: commentReactionsRouter,
    suggestions: suggestionsRouter,
    search: searchRouter,
-   playlist: playlistsRouter,
+   playlists: playlistsRouter,
 });
 
 // export type definition of API

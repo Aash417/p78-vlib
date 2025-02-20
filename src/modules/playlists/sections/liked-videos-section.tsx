@@ -41,7 +41,7 @@ function LikedVideoSectionSkeleton() {
 }
 
 function LikedVideoSectionSuspense() {
-   const [videos, query] = trpc.playlist.getLiked.useSuspenseInfiniteQuery(
+   const [videos, query] = trpc.playlists.getLiked.useSuspenseInfiniteQuery(
       { limit: DEFAULT_LIMIT },
       {
          getNextPageParam: (lastPage) => lastPage.nextCursor,

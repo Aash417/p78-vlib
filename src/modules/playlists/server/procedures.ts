@@ -1,6 +1,14 @@
 import { db } from '@/db';
-import { users, videoReactions, videos, videoViews } from '@/db/schema';
+import {
+   playlists,
+   playlistVideos,
+   users,
+   videoReactions,
+   videos,
+   videoViews,
+} from '@/db/schema';
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
+import { TRPCError } from '@trpc/server';
 import { and, desc, eq, getTableColumns, lt, or } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -87,7 +95,7 @@ export const playlistsRouter = createTRPCRouter({
          const nextCursor = hasMore
             ? {
                  id: lastItem.id,
-                 viewedAt: lastItem.updatedAt,
+                 viewedAt: lastItem.viewedAt,
               }
             : null;
 
@@ -181,6 +189,86 @@ export const playlistsRouter = createTRPCRouter({
             ? {
                  id: lastItem.id,
                  likedAt: lastItem.updatedAt,
+              }
+            : null;
+
+         return { items, nextCursor };
+      }),
+   create: protectedProcedure
+      .input(
+         z.object({
+            name: z.string().min(1),
+         }),
+      )
+      .mutation(async ({ input, ctx }) => {
+         const { name } = input;
+         const { id: userId } = ctx.user;
+
+         const [createPlaylist] = await db
+            .insert(playlists)
+            .values({
+               userId,
+               name,
+            })
+            .returning();
+
+         if (!createPlaylist) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+         return createPlaylist;
+      }),
+   getMany: protectedProcedure
+      .input(
+         z.object({
+            cursor: z
+               .object({
+                  id: z.string().uuid(),
+                  updatedAt: z.date(),
+               })
+               .nullish(),
+            limit: z.number().min(1).max(100),
+         }),
+      )
+      .query(async ({ input, ctx }) => {
+         const { cursor, limit } = input;
+         const { id: userId } = ctx.user;
+
+         const data = await db
+            .select({
+               ...getTableColumns(playlists),
+               user: users,
+               videoCount: db.$count(
+                  playlistVideos,
+                  eq(playlists.id, playlistVideos.playlistId),
+               ),
+            })
+            .from(playlists)
+            .innerJoin(users, eq(playlists.userId, users.id))
+            .where(
+               and(
+                  eq(playlists.userId, userId),
+                  cursor
+                     ? or(
+                          lt(playlists.updatedAt, cursor.updatedAt),
+                          and(
+                             eq(playlists.updatedAt, cursor.updatedAt),
+                             lt(playlists.id, cursor.id),
+                          ),
+                       )
+                     : undefined,
+               ),
+            )
+            .orderBy(desc(playlists.updatedAt), desc(playlists.id))
+            .limit(limit + 1);
+
+         const hasMore = data.length > limit;
+         // remove the last item cause user doesn supposed to know that we have fetched 6 items
+         const items = hasMore ? data.slice(0, -1) : data;
+         // Set the cursor to last item if there is more data
+         const lastItem = items[items.length - 1];
+         const nextCursor = hasMore
+            ? {
+                 id: lastItem.id,
+                 updatedAt: lastItem.updatedAt,
               }
             : null;
 

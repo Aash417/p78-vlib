@@ -28,7 +28,7 @@ export default function VideoReactions({
    const like = trpc.videoReactions.like.useMutation({
       onSuccess: () => {
          utils.videos.getOne.invalidate({ id: videoId });
-         utils.playlist.getLiked.invalidate();
+         utils.playlists.getLiked.invalidate();
       },
       onError: (error) => {
          toast.error('Something went wrong');
@@ -41,7 +41,7 @@ export default function VideoReactions({
    const dislike = trpc.videoReactions.dislike.useMutation({
       onSuccess: () => {
          utils.videos.getOne.invalidate({ id: videoId });
-         utils.playlist.getLiked.invalidate();
+         utils.playlists.getLiked.invalidate();
       },
       onError: (error) => {
          toast.error('Something went wrong');
