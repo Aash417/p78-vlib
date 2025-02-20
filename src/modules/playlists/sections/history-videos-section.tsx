@@ -9,53 +9,40 @@ import VideoGridCard, {
    VideoGridCardSkeleton,
 } from '@/modules/videos/ui/components/view-grid-card';
 import { trpc } from '@/trpc/client';
-
-type Props = {
-   query: string | undefined;
-   categoryId: string | undefined;
-};
-
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-export default function ResultSection(props: Props) {
+export default function HistoryVideoSection() {
    return (
-      <Suspense
-         key={`${props.query}-${props.categoryId}`}
-         fallback={<ResultSectionSkeleton />}
-      >
+      <Suspense fallback={<HistoryVideoSectionSkeleton />}>
          <ErrorBoundary fallback={<p>error...</p>}>
-            <ResultSectionSuspense {...props} />
+            <HistoryVideoSectionSuspense />
          </ErrorBoundary>
       </Suspense>
    );
 }
 
-function ResultSectionSkeleton() {
+function HistoryVideoSectionSkeleton() {
    return (
       <div>
-         <div className="hidden flex-col gap-4 md:flex">
-            {Array.from({ length: 5 }).map((_, index) => (
-               <VideoRowCardSkeleton key={index} />
+         <div className="flex flex-col gap-4 gap-y-10 md:hidden">
+            {Array.from({ length: 18 }).map((_, index) => (
+               <VideoGridCardSkeleton key={index + 1} />
             ))}
          </div>
 
-         <div className="flex flex-col gap-4 p-4 gap-y-10 pt-6 md:hidden">
-            {Array.from({ length: 5 }).map((_, index) => (
-               <VideoGridCardSkeleton key={index} />
+         <div className="hidden flex-col gap-4 md:flex">
+            {Array.from({ length: 18 }).map((_, index) => (
+               <VideoRowCardSkeleton key={index + 1} size="compact" />
             ))}
          </div>
       </div>
    );
 }
 
-function ResultSectionSuspense({ query, categoryId }: Props) {
-   const [results, resultQuery] = trpc.search.getMany.useSuspenseInfiniteQuery(
-      {
-         query,
-         categoryId,
-         limit: DEFAULT_LIMIT,
-      },
+function HistoryVideoSectionSuspense() {
+   const [videos, query] = trpc.playlist.getHistory.useSuspenseInfiniteQuery(
+      { limit: DEFAULT_LIMIT },
       {
          getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
@@ -64,24 +51,25 @@ function ResultSectionSuspense({ query, categoryId }: Props) {
    return (
       <>
          <div className="flex flex-col gap-4 gap-y-10 md:hidden">
-            {results.pages
+            {videos.pages
                .flatMap((page) => page.items)
                .map((video) => (
                   <VideoGridCard key={video.id} data={video} />
                ))}
          </div>
+
          <div className="hidden flex-col gap-4 md:flex">
-            {results.pages
+            {videos.pages
                .flatMap((page) => page.items)
                .map((video) => (
-                  <VideoRowCard key={video.id} data={video} />
+                  <VideoRowCard key={video.id} data={video} size="compact" />
                ))}
          </div>
 
          <InfiniteScroll
-            hasNextPage={resultQuery.hasNextPage}
-            isFetchingNextPage={resultQuery.isFetchingNextPage}
-            fetchNextPage={resultQuery.fetchNextPage}
+            hasNextPage={query.hasNextPage}
+            isFetchingNextPage={query.isFetchingNextPage}
+            fetchNextPage={query.fetchNextPage}
          />
       </>
    );
