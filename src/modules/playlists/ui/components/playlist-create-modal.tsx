@@ -76,7 +76,7 @@ export default function PlaylistCreateModal({
                   )}
                />
 
-               <div className="flex justify-end">
+               <div className="flex justify-end pt-4">
                   <Button disabled={create.isPending} type="submit">
                      Create
                   </Button>
