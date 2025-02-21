@@ -3,8 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
-import PlaylistsSection from '../../sections/playlists-section';
 import PlaylistCreateModal from '../components/playlist-create-modal';
+import PlaylistsSection from '../sections/playlists-section';
 
 export default function PlaylistsView() {
    const [createModalOpen, setCreateModalOpen] = useState(false);

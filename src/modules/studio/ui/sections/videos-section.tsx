@@ -170,13 +170,13 @@ function VideosSectionSuspense() {
                               </TableCell>
 
                               <TableCell className="text-right text-sm">
-                                 Views
+                                 {video.viewCount}
                               </TableCell>
                               <TableCell className="text-right text-sm">
-                                 Views
+                                 {video.commentCount}
                               </TableCell>
                               <TableCell className="text-right text-sm pr-6">
-                                 Views
+                                 {video.likeCount}
                               </TableCell>
                            </TableRow>
                         </Link>

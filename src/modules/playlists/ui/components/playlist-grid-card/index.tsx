@@ -1,10 +1,10 @@
 import { THUMBNAIL_FALLBACK } from '@/constants';
 import { PlaylistGetManyOutput } from '@/modules/playlists/types';
 import Link from 'next/link';
+import PlaylistInfo, { PlaylistInfoSkeleton } from './playlist-info';
 import PlaylistThumbnail, {
    PlaylistThumbnailSkeleton,
 } from './playlist-thumbnail';
-import PlaylistInfo, { PlaylistInfoSkeleton } from './playlist-info';
 
 type Props = {
    data: PlaylistGetManyOutput['items'][number];

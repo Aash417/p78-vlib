@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import PlaylistGridCard, {
    PlaylistGridCardSkeleton,
-} from '../ui/components/playlist-grid-card';
+} from '../components/playlist-grid-card';
 
 export default function PlaylistsSection() {
    return (

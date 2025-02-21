@@ -1,6 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlaylistGetManyOutput } from '@/modules/playlists/types';
-import React from 'react';
 
 type Props = {
    data: PlaylistGetManyOutput['items'][number];

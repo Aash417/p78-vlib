@@ -1,4 +1,4 @@
-import HistoryVideoSection from '../../sections/history-videos-section';
+import HistoryVideoSection from '../sections/history-videos-section';
 
 export default function HistoryView() {
    return (

@@ -1,4 +1,4 @@
-import LikedVideoSection from '../../sections/liked-videos-section';
+import LikedVideoSection from '../sections/liked-videos-section';
 
 export default function LikedView() {
    return (

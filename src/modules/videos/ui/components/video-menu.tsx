@@ -22,7 +22,6 @@ type Props = {
    onRemove?: () => void;
 };
 
-// todo implement whats left
 export default function VideoMenu({
    variant = 'ghost',
    videoId,
@@ -67,7 +66,7 @@ export default function VideoMenu({
                </DropdownMenuItem>
 
                {onRemove && (
-                  <DropdownMenuItem onClick={() => {}}>
+                  <DropdownMenuItem onClick={onRemove}>
                      <Trash2Icon className="mr-2 size-4" />
                      Remove
                   </DropdownMenuItem>
