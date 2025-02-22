@@ -6,6 +6,7 @@ import { searchRouter } from '@/modules/search/server/procedures';
 import { studioRouter } from '@/modules/studio/server/procedures';
 import { subscriptionsRouter } from '@/modules/subscriptions/server/procedure';
 import { suggestionsRouter } from '@/modules/suggestions/server/procedures';
+import { usersRouter } from '@/modules/users/server/procedures';
 import { videoReactionsRouter } from '@/modules/video-reactions/server/procedure';
 import { videoViewsRouter } from '@/modules/video-views/server/procedure';
 import { videosRouter } from '@/modules/videos/server/procedures';
@@ -23,6 +24,7 @@ export const appRouter = createTRPCRouter({
    suggestions: suggestionsRouter,
    search: searchRouter,
    playlists: playlistsRouter,
+   users: usersRouter,
 });
 
 // export type definition of API

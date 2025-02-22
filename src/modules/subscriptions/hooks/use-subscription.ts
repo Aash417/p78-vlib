@@ -15,14 +15,12 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: Props) {
    const subscribe = trpc.subscriptions.create.useMutation({
       onSuccess: () => {
          toast.success('Subscribed');
-
          utils.videos.getManySubscribed.invalidate();
-
+         utils.users.getOne.invalidate({ id: userId });
          if (fromVideoId) utils.videos.getOne.invalidate({ id: fromVideoId });
       },
       onError: (error) => {
          toast.error('something went wrong');
-
          if (error.data?.code === 'UNAUTHORIZED') clerk.openSignIn();
       },
    });
@@ -30,14 +28,12 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: Props) {
    const unsubscribe = trpc.subscriptions.remove.useMutation({
       onSuccess: () => {
          toast.success('Unsubscribed');
-
          utils.videos.getManySubscribed.invalidate();
-
+         utils.users.getOne.invalidate({ id: userId });
          if (fromVideoId) utils.videos.getOne.invalidate({ id: fromVideoId });
       },
       onError: (error) => {
          toast.error('something went wrong');
-
          if (error.data?.code === 'UNAUTHORIZED') clerk.openSignIn();
       },
    });
