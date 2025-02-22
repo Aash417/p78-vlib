@@ -49,6 +49,7 @@ export default function SubscriptionsSection() {
                               }
                            >
                               <Link
+                                 prefetch
                                  href={`/users/${subscription.user.id}`}
                                  className="flex items-center gap-4"
                               >
@@ -71,6 +72,7 @@ export default function SubscriptionsSection() {
                         isActive={pathname === '/subscriptions'}
                      >
                         <Link
+                           prefetch
                            href="/subscriptions"
                            className="flex items-center gap-4"
                         >

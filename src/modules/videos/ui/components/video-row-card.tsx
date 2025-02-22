@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import {
    Tooltip,
    TooltipContent,
@@ -12,7 +13,6 @@ import { useMemo } from 'react';
 import { VideoGetManyOutput } from '../../types';
 import VideoMenu from './video-menu';
 import VideoThumbnail, { VideoThumbnailSkeleton } from './video-thumbnail';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const videoRowCardVariants = cva('group flex min-w-0', {
    variants: {
@@ -101,6 +101,7 @@ export default function VideoRowCard({
    return (
       <div className={videoRowCardVariants({ size })}>
          <Link
+            prefetch
             href={`/videos/${data.id}`}
             className={thumbnailVariants({ size })}
          >
@@ -115,7 +116,11 @@ export default function VideoRowCard({
          {/* Info  */}
          <div className="flex-1 min-w-0">
             <div className="flex justify-between gap-x-2">
-               <Link href={`/videos/${data.id}`} className="flex-1 min-w-0">
+               <Link
+                  prefetch
+                  href={`/videos/${data.id}`}
+                  className="flex-1 min-w-0"
+               >
                   <h3
                      className={cn(
                         'font-medium line-clamp-2',

@@ -23,6 +23,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { APP_URL, THUMBNAIL_FALLBACK } from '@/constants';
 import { videoUpdateSchema } from '@/db/schema';
@@ -48,7 +49,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import ThumbnailUploadModal from '../components/thumbnail-upload-modal';
-import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
    videoId: string;
@@ -407,7 +407,7 @@ function FormSectionSuspense({ videoId }: Readonly<Props>) {
                                     Video link
                                  </p>
                                  <div className="flex items-center gap-x-2">
-                                    <Link href={`/videos/${video.id}`}>
+                                    <Link prefetch href={`/videos/${video.id}`}>
                                        <p className="line-clamp-1 text-sm text-blue-500">
                                           {fullUrl}
                                        </p>

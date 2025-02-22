@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import UserAvatar from '@/components/user-avatar';
 import UserInfo from '@/modules/users/ui/components/user-info';
 import { formatDistanceToNow } from 'date-fns';
@@ -5,7 +6,6 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { VideoGetManyOutput } from '../../types';
 import VideoMenu from './video-menu';
-import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
    data: VideoGetManyOutput['items'][number];
@@ -37,20 +37,20 @@ export default function VideoInfo({ data, onRemove }: Props) {
 
    return (
       <div className="flex gap-3">
-         <Link href={`/users/${data.user.id}`}>
+         <Link prefetch href={`/users/${data.user.id}`}>
             <UserAvatar imageUrl={data.user.imageUrl} name={data.user.name} />
          </Link>
 
          <div className="min-w-0 flex-1">
-            <Link href={`/videos/${data.id}`}>
+            <Link prefetch href={`/videos/${data.id}`}>
                <h3 className="font-medium line-clamp-1 lg:line-clamp-2 text-base break-words">
                   {data.title}
                </h3>
             </Link>
-            <Link href={`/users/${data.user.id}`}>
+            <Link prefetch href={`/users/${data.user.id}`}>
                <UserInfo name={data.user.name} />
             </Link>
-            <Link href={`/videos/${data.id}`}>
+            <Link prefetch href={`/videos/${data.id}`}>
                <p className="font-medium text-sm">
                   {compactViews} views • {compactDate}
                </p>

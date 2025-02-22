@@ -46,6 +46,7 @@ export default function MainSection() {
                         }}
                      >
                         <Link
+                           prefetch
                            href={item.url}
                            className="flex items-center gap-4"
                         >

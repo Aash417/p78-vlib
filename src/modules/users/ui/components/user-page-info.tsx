@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import UserAvatar from '@/components/user-avatar';
+import { cn } from '@/lib/utils';
 import { useSubscription } from '@/modules/subscriptions/hooks/use-subscription';
 import SubscriptionButton from '@/modules/subscriptions/ui/components/subscription-button';
 import { useAuth, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { UserGetOneOutput } from '../../types';
-import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
    user: UserGetOneOutput;
@@ -48,7 +48,9 @@ export default function UserPageInfo({ user }: Props) {
                   asChild
                   className="w-full mt-3 rounded-full"
                >
-                  <Link href="/studio">Go to studio</Link>
+                  <Link prefetch href="/studio">
+                     Go to studio
+                  </Link>
                </Button>
             ) : (
                <SubscriptionButton
@@ -88,7 +90,9 @@ export default function UserPageInfo({ user }: Props) {
                      asChild
                      className="mt-3 rounded-full"
                   >
-                     <Link href="/studio">Go to studio</Link>
+                     <Link prefetch href="/studio">
+                        Go to studio
+                     </Link>
                   </Button>
                ) : (
                   <SubscriptionButton

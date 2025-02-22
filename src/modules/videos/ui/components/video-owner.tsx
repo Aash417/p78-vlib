@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/user-avatar';
+import { useSubscription } from '@/modules/subscriptions/hooks/use-subscription';
 import SubscriptionButton from '@/modules/subscriptions/ui/components/subscription-button';
 import UserInfo from '@/modules/users/ui/components/user-info';
 import { useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import { VideoGetOneOutput } from '../../types';
-import { useSubscription } from '@/modules/subscriptions/hooks/use-subscription';
 
 type Props = {
    user: VideoGetOneOutput['user'];
@@ -22,7 +22,7 @@ export default function VideoOwner({ user, videoId }: Props) {
 
    return (
       <div className="flex items-center sm:items-start justify-between sm:justify-start gap-3 min-w-0">
-         <Link href={`/user/${user.id}`}>
+         <Link prefetch href={`/user/${user.id}`}>
             <div className="flex items-center gap-3 min-w-0">
                <UserAvatar
                   size="lg"
@@ -40,7 +40,9 @@ export default function VideoOwner({ user, videoId }: Props) {
          </Link>
          {clerkUserId === user.clerkId ? (
             <Button variant="secondary" className="rounded-full" asChild>
-               <Link href={`/studio/videos/${videoId}`}>Edit video</Link>
+               <Link prefetch href={`/studio/videos/${videoId}`}>
+                  Edit video
+               </Link>
             </Button>
          ) : (
             <SubscriptionButton
