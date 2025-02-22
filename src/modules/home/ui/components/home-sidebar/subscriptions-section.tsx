@@ -88,7 +88,7 @@ export default function SubscriptionsSection() {
    );
 }
 
-export function LoadingSkeleton(): JSX.Element {
+export function LoadingSkeleton() {
    return (
       <SidebarMenu>
          {[...Array(4)].map((_, index) => (
